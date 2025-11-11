@@ -1,25 +1,35 @@
+import { use } from "react";
 import conf from "../conf/conf";
 import { Client, Account, ID } from "appwrite";
 
 
 export class AuthService{
-    Client = new Client();
+    client = new Client();
     account;
     constructor(){
-        this.Client
+        this.client
+        .setEndpoint(conf.appWriteUrl)
       .setProject(conf.appWriteProjectID)
-    .setEndpoint(conf.appWriteUrl);
-    this.account= new Account(this.Client)
+ 
+    this.account= new Account(this.client)
     }
 
     async CreateAccount({email,password,name}){
         try{
-       const user=  await this.account.create(ID.unique(),email,password,name)
+      const user = await this.account.create({
+  userId: ID.unique(),
+  email: email,
+  password: password,
+  name: name
+});
+
+       console.log(user); 
        if(user){
-        // call another
-        this.Login({email,password})
+        
+      return await this.Login({email, password});
        }else{
-        return  user
+        return user
+     
        }
         
         }catch(err){
@@ -30,7 +40,10 @@ export class AuthService{
 
     async Login ({email,password}){
         try{
-          return  await this.account.createEmailPasswordSession({email,password})
+   return await this.account.createEmailPasswordSession({
+  email: email,
+  password: password
+});
 
         }catch(error){
             throw error
@@ -48,7 +61,7 @@ export class AuthService{
 
     async Logout (){
         try{
-        return await this.account.deleteSessions()
+     return await this.account.deleteSession("current");
         }catch(error){
             console.log(error);
             

@@ -6,21 +6,21 @@ import {Button,Input,Logo}from './index'
 import AuthServices from '../appwrite/auth'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import Logo from './index'
+
 
 function Login() {
-    const navigate = useNavigate()
+     const navigate = useNavigate() 
     const dispatch = useDispatch()
-    const [register,handSubmit] = useForm()
+  const { register, handleSubmit } = useForm()
     const [error, setError]= useState('')
 
-    const login = async(data)=>{
+    const handleLogin  = async(data)=>{
      setError('')
      try{
        const session =await AuthServices.Login(data)
        if(session){
         const user = await AuthServices.CurrentUser()
-        if(user) dispatch(Login(user))
+        if(user) dispatch(login(user))
         navigate('/')
        }
      }catch(error){
@@ -49,14 +49,14 @@ function Login() {
         </p>
         {error &&<p className='text-red-600 mt-8 text-center'>{error}</p>}
 
-        <form onSubmit={handSubmit(Login)} className='mt-8'>
+        <form onSubmit={handleSubmit(handleLogin)} className='mt-8'>
                 <div className='space-y-5'>
                 <Input 
                 label ='Email:'
                 placeholder= "Enter your Email"
                 type = "email"
 
-                {...register("eamil",{
+                {...register("email",{
                     required:true,
                     validate: {
                         matchPatern:(value)=>/[a-z0-9]+[_a-z0-9\.-]*[a-z0-9]+@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})/.test(value)||"Email adress must be valid"

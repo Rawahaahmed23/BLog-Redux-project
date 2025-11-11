@@ -10,19 +10,27 @@ import { Button, Input, Logo } from './index'
 
 function Signup() {
     const navigate = useNavigate()
-    const [error, setError] = ('')
+        const [error, setError] = useState('')
     const dispatch = useDispatch()
-    const [register, handSubmit] = useForm()
+    const { register, handleSubmit } = useForm();
     const create = async (data) => {
-        setError("")
-        try {
-            const create = await AuthServices.CreateAccount(data)
-            if (create) await AuthServices.CurrentUser()
-            if (create) dispatch(login(create))
-            navigate('/')
-        } catch (error) {
-            setError(error.message)
-        }
+        try{
+            setError("")
+             const newUser = await AuthServices.CreateAccount(data);
+       
+             
+        if (newUser) {
+          const current = await AuthServices.CurrentUser();
+          if (current) {
+            dispatch(login(current));
+            navigate("/");
+          }
+            
+        }}
+    catch(error){
+        console.log(error);
+        
+    }
     }
     return (
         <div className="flex items-center justify-center">
@@ -44,38 +52,38 @@ function Signup() {
                 </p>
                 {error && <p className='text-red-600 mt-8 text-center'>{error}</p>}
 
-                <form onSubmit={handSubmit(create)}>
+                <form onSubmit={handleSubmit(create)}>
                     <div className='space-y-5'>
                         <Input
                             label="Full Name:"
                             placeholder='Enter your full Name'
-                            {...register('name'), {
-                                required: true
-                            }}
+                            {...register('name', { required: true })}
                         />
                         <Input
                             label='Email:'
                             placeholder="Enter your Email"
                             type="email"
 
-                            {...register("eamil", {
+                            {...register("email", {
                                 required: true,
                                 validate: {
-                                matchPatern: (value) => /[a-z0-9]+[_a-z0-9\.-]*[a-z0-9]+@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})/.test(value) || "Email adress must be valid"
-                                }
+                                    matchPattern: (value) =>
+                                        /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(value) ||
+                                        "Email address must be valid",
+                                },
                             })}
                         />
-                        <Input 
-                        label = 'Password'
-                        type = 'Password'
-                        placeholder = 'Enter your password'
-                        {...register('password',{
-                            required:true
-                        })}
+                        <Input
+                            label='Password'
+                            type='Password'
+                            placeholder='Enter your password'
+                            {...register('password', {
+                                required: true
+                            })}
                         />
 
                         <Button type="submit"
-                        className = 'w=full'>Create Account</Button>
+                            className='w=full'>Create Account</Button>
 
                     </div>
 

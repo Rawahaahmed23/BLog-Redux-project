@@ -5,15 +5,19 @@ import { useDispatch } from 'react-redux'
 import { login,logout } from './store/authSlic'
 import AuthServices from './appwrite/auth'
 
+
+import {Header} from './components'
+import { Outlet } from 'react-router-dom'
+
 function App() {
-  const [count, setCount] = useState(0)
+
 const [loading,setloading]=  useState(true)
 const dispatch = useDispatch(AuthServices)
 
 useEffect(()=>{
   AuthServices.CurrentUser().then((data)=>{
     if(data){
-      dispatch(login({data}))
+dispatch(login({data}))
       
     }else{
       dispatch(logout())
@@ -23,18 +27,20 @@ useEffect(()=>{
   })
 
   .catch(()=>{
-    console.log('errror');
+         
+
     
   })
 },[])
   return  !loading ?(
     <div className='min-h-screen'>
  <div className='w-full block'>
-        {/* <Header /> */}
+        <Header />
+
         <main>
-        {/* TODO:  <Outlet /> */}
+    <Outlet />
         </main>
-        <Footer />
+  
       </div>
 
     </div>

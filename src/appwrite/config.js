@@ -8,8 +8,8 @@ export class Service {
 
   constructor() {
     this.client
-      .setProject(conf.appWriteProjectID)
-      .setEndpoint(conf.appWriteUrl);
+      .setEndpoint(conf.appWriteUrl) 
+      .setProject(conf.appWriteProjectID); 
 
     this.tablesDB = new Databases(this.client);
     this.bucket = new Storage(this.client);
@@ -18,10 +18,16 @@ export class Service {
 
   async createPost({ title, slug, content, featuredImage, status, userId }) {
     try {
-      return await this.tablesDB.createRow(
+      return await this.tablesDB.createDocument(
         conf.appWriteDataBaseID,
         conf.appWriteTableID,   
+        ID.unique(),
+    
+        
+        
+        
         {
+        
           title,
           slug,
           content,
@@ -32,7 +38,7 @@ export class Service {
       );
     } catch (error) {
       console.log("Create error:", error);
-      throw error;
+      throw error
     }
   }
 
@@ -72,7 +78,7 @@ export class Service {
   }
   async getPost(rowid){
       try{
-   return await tablesDB.getRow(
+   return await this.tablesDB.getDocument(
         conf.appWriteDataBaseID,
         conf.appWriteTableID,
         rowid
@@ -87,7 +93,7 @@ export class Service {
 
   async getAllPost (queries = [Query.equal('status' ,"active")]){
     try{
-   return await tablesDB.listRows(
+   return await this.tablesDB.listDocuments(
     conf.appWriteDataBaseID,
     conf.appWriteTableID,
     queries,
